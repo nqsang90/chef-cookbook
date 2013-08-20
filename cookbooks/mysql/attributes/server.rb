@@ -20,6 +20,7 @@
 default['mysql']['bind_address']               = attribute?('cloud') ? cloud['local_ipv4'] : ipaddress
 default['mysql']['port']                       = 3306
 default['mysql']['nice']                       = 0
+normal['mysql']['server_root_password']		= "Aesx5099"
 
 case node["platform_family"]
 when "debian"

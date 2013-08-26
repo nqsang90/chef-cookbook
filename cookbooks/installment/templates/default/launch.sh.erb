@@ -1,0 +1,87 @@
+#! /bin/bash
+
+# execution path
+SCRIPT_DIR="$(dirname $(readlink -f ${BASH_SOURCE[0]}))"
+CURPATH=$(pwd)
+cd "$SCRIPT_DIR/.."
+APP_DIR=$(pwd)
+cd "$CURPATH"
+
+# launch java console
+cd "$APP_DIR"
+JAVA_CP="./:config/:$(bin/classpath.sh)"
+#echo "The Class Path $JAVA_CP"
+JAVA_CMD="java"
+JAVA_LAUNCHER="com.mbv.module.launcher.ConsoleModuleLauncher"
+JAVA_OPTS="-Dlog4j.configuration=file:$APP_DIR/config/log4j.properties -Dcom.mbv.module.loaders=com.mbv.module.lib.DirectoryLibModuleLoader,com.mbv.module.lib.XmlLibModuleLoader,com.mbv.module.spring.DirectorySpringModuleLoader,com.mbv.module.spring.XmlSpringModuleLoader"
+JAVA_ARG_MOD_URI_ESC=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "file:$APP_DIR")
+#echo "URI escaped $JAVA_ARG_MOD_URI_ESC"
+JAVA_ARG_MODULE="module://LibDir?url=$JAVA_ARG_MOD_URI_ESC"
+
+#==================================================
+# launch <%=@mod_name%> daemon
+#==================================================
+PIDFILE="$APP_DIR/bin/<%=@mod_name%>.pid"
+BINCMD="$APP_DIR/bin/<%=@mod_name%>"
+CMDOPTS=""
+if [ "$DEBUG" = "1" ]; then
+	CMDOPTS+="-debug -verbose "
+fi;
+
+EXIT_CODE=0
+if [ $BINCMD = $JAVA_CMD ]; then
+	CMDOPTS+="-cp $JAVA_CP"
+        $JAVA_CMD $CMDOPTS $JAVA_OPTS $JAVA_LAUNCHER $JAVA_ARG_MODULE
+        EXIT_CODE=$?
+else
+        CMDOPTS+="-cp $JAVA_CP$APP_DIR/bin/commons-daemon.jar: -wait 30 -pidfile $PIDFILE -outfile $APP_DIR/log/<%=@mod_name%>.log -errfile $APP_DIR/log/<%=@mod_name%>.err"
+        case "$1" in
+                "start")
+                        if [ -f $PIDFILE ]; then
+                                echo "FAILED: The <%=@mod_name%> service is running."
+                                EXIT_CODE=1;
+                        else
+		                        echo "Starting <%=@mod_name%> ... "
+		                        # exec
+		                        $BINCMD $CMDOPTS $JAVA_OPTS $JAVA_LAUNCHER $JAVA_ARG_MODULE
+		                        if [ ! "$?" = 0 ]; then
+		                                echo "Failed to start <%=@mod_name%> please check the log files!"
+		                        else
+		                                echo "<%=@mod_name%> has been started successfully."
+		                        fi;
+		                        EXIT_CODE=$?
+		                fi;
+                ;;
+                "stop")
+                        echo "Stopping <%=@mod_name%> ..."
+                        if [ ! -f $PIDFILE ]; then
+                                echo "FAILED: no pid file found. Process may not start yet."
+                                EXIT_CODE=0;
+                        else
+                                $BINCMD $CMDOPTS -stop $JAVA_LAUNCHER
+                                if [ ! "$?" = 0 ]; then
+                                    echo "Failed to stop <%=@mod_name%>."
+                                else
+                                        echo "<%=@mod_name%> has been stopped successfully."
+                                fi;
+                                EXIT_CODE=$?
+                        fi;
+                ;;
+                "restart")
+                        $CURPATH/$0 stop
+                        if [ $? = 0 ]; then
+                            $CURPATH/$0 start
+                        fi;
+                        EXIT_CODE=$?
+                ;;
+                *)
+                        echo "usage: $0 {start|stop|restart}"
+                ;;
+        esac
+fi;
+
+#==================================================
+# return to current path
+#==================================================
+cd "$CURPATH"
+exit $EXIT_CODE

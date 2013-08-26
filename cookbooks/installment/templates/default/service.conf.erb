@@ -1,0 +1,13 @@
+
+# imagemagick configuration
+imagemagick.path=/usr/bin/convert
+image.cdn.url=http://abcxyz.cloudfront.com/mbvmca/
+
+# configuration of access control client implementation
+# production: com.mbv.installment.service.AcClient
+# development: com.mbv.installment.service.dev.AcClientDev
+ac.client.class=com.mbv.installment.service.dev.AcClientDev
+
+# link product detail with MSIN parameter
+msin.product.detail = http://<%=@ipaddress%>:8080/user/index.htm#shopping/product?MSIN=
+

@@ -1,0 +1,17 @@
+#=========================================
+# external services config
+#=========================================
+
+# URL HR Admin
+mca.hr.url=http://<%=node['ipaddress']%>:8080/hr
+
+# URL MCA User
+mca.user.url=http://<%=node['ipaddress']%>:8080/user
+
+# production: com.mbv.services.xsecd.XsecdService
+# test: com.mbv.mca.service.test.FakeXsecdService
+xsecd.class = com.mbv.mca.service.test.FakeXsecdService
+
+# production: com.mbv.mca.service.AcClient
+# test: com.mbv.mca.service.test.FakeAcClient
+acClient.class = com.mbv.mca.service.test.FakeAcClient

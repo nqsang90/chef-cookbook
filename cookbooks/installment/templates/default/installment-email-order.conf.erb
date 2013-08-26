@@ -1,0 +1,33 @@
+order.view.user.url = http://<%=@ipaddress%>:8080/user/index.htm#shopping/order
+order.view.provider.url = http://<%=@ipaddress%>:9393/installment/provider/order/details.htm
+order.view.admin.url = http://<%=@ipaddress%>:8383/installment/admin/order/details.htm
+
+#email, sms template for user
+order.create.user.email.subject=Email thong bao don hang moi - @{#order.orderID}
+order.create.user.email.template=modules/installment/template/order/email_user_order_created.html
+order.create.user.sms.template=Thong bao don hang moi\nThoi gian: @{#Utils.formatDate(#order.createdAt,'dd/MM/yyyy HH:mm:ss','GMT+7')}\nMa don hang: @{#order.orderID}\nSo tien: @{#Utils.formatNumber(#order.amount,'#,###')}\nTrang thai: @{#order.status}\nMCA-MobiVi'.
+
+order.update.status.user.email.subject=Email thong bao don hang thay doi [@{#order.orderID} - @{#order.status}]
+order.update.status.user.email.template=modules/installment/template/order/email_user_order_created.html
+order.update.status.user.sms.template=Thong bao don hang thay doi\nThoi gian: @{#Utils.formatDate(#order.createdAt,'dd/MM/yyyy HH:mm:ss','GMT+7')}\nMa don hang: @{#order.orderID}\nSo tien: @{#Utils.formatNumber(#order.amount,'#,###')}\nTrang thai: @{#order.status}\nMCA-MobiVi'.
+
+
+#email, sms template for provider
+order.create.provider.email.subject=Email thong bao don hang moi - @{#order.orderID}
+order.create.provider.email.template=modules/installment/template/order/email_provider_order_created.html
+order.create.provider.sms.template=Thong bao don hang moi.\nDon hang @{#order.orderID} dang cho xu ly tren kenh ban hang cua MobiVi. Vui long truy cap @{#urlViewOrderDetail + '?oid=' + #order.orderID} de xu ly.
+
+order.update.status.provider.email.subject=Email thong bao don hang thay doi [@{#order.orderID} - @{#order.status}]
+order.update.status.provider.email.template=modules/installment/template/order/email_provider_order_created.html
+order.update.status.provider.sms.template=Thong bao don hang thay doi.\nDon hang @{#order.orderID} - @{#order.status} tren kenh ban hang cua MobiVi. Vui long truy cap @{#urlViewOrderDetail + '?oid=' + #order.orderID} de xem chi tiet.
+
+
+#email, sms template for mobivi admin
+order.create.admin.email.subject=Email thong bao don hang moi - @{#order.orderID}
+order.create.admin.email.template=modules/installment/template/order/email_admin_order_created.html
+order.create.admin.sms.template=Thong bao don hang moi.\nDon hang @{#order.orderID} vua duoc tao tren kenh ban hang cua MobiVi. Vui long truy cap @{#urlViewOrderDetail + '?oid=' + #order.orderID} de xem chi tiet.
+
+order.update.status.admin.email.subject=Email thong bao don hang thay doi [@{#order.orderID} - @{#order.status}]
+order.update.status.admin.email.template=modules/installment/template/order/email_admin_order_created.html
+order.update.status.admin.sms.template=Thong bao don hang thay doi.\nDon hang @{#order.orderID} - @{#order.status} tren kenh ban hang cua MobiVi. Vui long truy cap @{#urlViewOrderDetail + '?oid=' + #order.orderID} de xem chi tiet.
+

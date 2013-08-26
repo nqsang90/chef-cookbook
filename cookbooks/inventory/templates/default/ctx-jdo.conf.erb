@@ -1,0 +1,16 @@
+#=========================================
+# database
+#=========================================
+# database server config
+database.host=<%=@db_host%>
+database.port=3306
+
+jdbc.username	 = <%=@db_user%>
+jdbc.password	 = <%=@db_password%>
+jdbc.schema     = inventory
+jdbc.driver	 = com.mysql.jdbc.Driver
+jdbc.url	= ${database.driver.scheme}://${database.host}:${database.port}/${jdbc.schema}?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+
+database.driver.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+database.driver.showSQL=false
+database.driver.scheme=jdbc:mysql

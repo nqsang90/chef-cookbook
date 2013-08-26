@@ -1,0 +1,10 @@
+# XAccount client config
+
+xacct.url = http://<%=node['ipaddress']%>:8585/xacct
+xacct.url.external = http://<%=node['ipaddress']%>:8585/xacct
+
+xacct.conn.url=${xacct.url}/soap/XAcctService
+xacct.conn.timeout=10000
+
+xacct.pool.init=1
+xacct.pool.max=16

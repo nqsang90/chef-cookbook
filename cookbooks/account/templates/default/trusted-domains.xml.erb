@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<!-- the following list define the list of trusted domains for user redirection after authentication -->
+	<bean id="trustedDomainList" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<value>www.mobivi.vn</value>
+				<value>mca.mobivi.vn</value>
+				<value>localhost</value>
+				<value>127.0.0.1</value>
+				<value><%=@ipaddress%></value>
+			</list>
+		</constructor-arg>
+	</bean>
+	
+</beans>

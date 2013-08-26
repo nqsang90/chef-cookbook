@@ -1,0 +1,22 @@
+#MBVID DB Writable: com.mbv.services.mbvid.manager.impl.AuthManagerImpl
+#MBVID DB ReadOnly: com.mbv.services.mbvid.manager.impl.AuthManagerDBReadOnlyImpl
+authentication.module.class=com.mbv.services.mbvid.manager.impl.AuthManagerImpl
+
+#MCA     email: mca@mobivi.vn
+#EWallet email: transactions@mobivi.vn
+email.address.from=mca@mobivi.vn
+
+#MCA     email reset pass: /WEB-INF/template/email/new_password_email_account.html
+#Ewallet email reset pass: /WEB-INF/template/email/new_password_email_account_ewallet.html
+email.password.reset.template=/WEB-INF/template/email/new_password_email_account.html
+
+#MCA     email reset pass:Thong tin thiet lap mat khau moi MobiVi ID
+#Ewallet email reset pass:Thong tin thiet lap mat khau moi tai khoan Vi Dien Tu
+email.password.reset.title=Thong tin thiet lap mat khau moi MobiVi ID
+
+#configuration service to remote MobiVi ID that allow write database
+mbvidClient.class=com.mbv.account.soap.mbvid.MbvIdServiceClient
+mbvidClient.conn.url=http://10.120.2.210:8080/account/soap/mbvid
+mbvidClient.conn.timeout=60000
+mbvid.pool.init=8
+mbvid.pool.max=16

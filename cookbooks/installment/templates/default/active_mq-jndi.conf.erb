@@ -1,0 +1,7 @@
+# ActiveMQ - Sender
+sender.activeMQ.url								= tcp://<%=@host_active_mq%>:61616
+sender.activeMQ.messageIn 				    	= Queue.QueuedMessage.In
+
+# ActiveMQ - Listener
+listener.activeMQ.url							= tcp://<%=@host_active_mq%>:61616
+listener.activeMQ.OrderProcess.Notification   	= topic.OrderProcess.Notification

@@ -1,0 +1,138 @@
+
+# Cookbook Name:: account
+# Recipe:: default
+#
+# Copyright 2013, YOUR_COMPANY_NAME
+#
+# All rights reserved - Do Not Redistribute
+
+#package "maven"
+#package "tomcat7"
+
+package_server = "http://192.168.253.157:8181"
+checkout_dir = "/opt/account"
+artifact_id = "account"
+version = "0.3.6"
+package = artifact_id + ".zip"
+tomcat_dir = "/opt/apache-tomcat-6.0.37"
+app_temp_dir = "/tmp/#{artifact_id}"
+app_dir = "/opt/webapps/#{artifact_id}"
+
+#prepare webapps folder
+directory "/opt/webapps" do
+  owner "root"
+  group "root"
+  mode 00755
+  action :create
+end
+
+=begin
+#prepare app temp dir
+directory app_temp_dir do
+  owner "root"
+  group "root"
+  mode 00755
+  action :create
+end
+
+# download .war from package server
+remote_file "/#{app_temp_dir}/#{package}" do
+  source "#{package_server}/#{package}"
+  mode "0755"
+end
+
+# extract package
+execute "extract-package" do
+	cwd app_temp_dir
+	command "unzip -x #{package}"
+end
+=end
+#what is the version being deployed?
+
+#prepare app dir
+directory app_dir do
+  owner "root"
+  group "root"
+  mode 00755
+  action :create
+end
+#prepare app/version dir
+directory app_dir+'/'+version do
+  owner "root"
+  group "root"
+  mode 00755
+  action :create
+end
+
+# download
+p=remote_file app_dir+'/'+version+'/'+package do
+  source "#{package_server}/#{package}"
+  mode "0755"
+	action	:nothing
+end
+p.run_action(:create)
+
+file "/opt/#{package}" do
+	content IO.read(app_dir+'/'+version+'/'+package)
+end
+# extract package
+execute "extract-package" do
+	cwd app_dir+'/'+version
+	command "unzip -x #{package}"
+	not_if {File.exists?(app_dir+'/'+version+'/'+artifact_id)}
+end
+
+# run mysql script
+#execute "mysql-install-privileges" do
+	#command "mysql -u root -p < #{checkout_dir}/src/main/script/authentication.sql"
+#end
+# config the package
+
+config_dir = "#{app_dir}/#{version}/#{artifact_id}/WEB-INF"
+#execute "dos2unix" do
+	#command "dos2unix #{config_dir}/*.conf"
+#	user "root"
+	#group "root"
+#end
+template "#{config_dir}/config.properties" do
+	content "config.properties.erb"
+	variables(
+		:development => true
+	)
+end
+
+template "#{config_dir}/account-jdo.conf" do
+	content "account-jdo.conf.erb"
+end
+template "#{config_dir}/active_mq-jndi.conf" do
+	content "active_mq-jndi.conf.erb"
+end
+template "#{config_dir}/active_mq_sender.conf" do
+	content "active_mq_sender.conf.erb"
+end
+
+#stop server
+execute "shutdown-tomcat-server" do
+	command "#{tomcat_dir}/bin/shutdown.sh"
+	user	"root"
+	group 	"root"
+end
+# link
+link "#{tomcat_dir}/webapps/#{artifact_id}" do
+	to	app_dir+'/'+version+'/'+artifact_id
+end
+# start tomcat server
+execute "start-tomcat-server" do
+	command "#{tomcat_dir}/bin/startup.sh"
+	user	"root"
+	group 	"root"
+end
+
+
+# remove old version
+#directory "#{tomcat_dir}/webapps/#{artifact_id}" do
+	#action	:delete
+#	recursive true
+	#only_if {}
+#end
+

@@ -7,80 +7,31 @@
 # All rights reserved - Do Not Redistribute
 
 
-#package "maven"
-#package "tomcat7"
-
 package_server = node['deployment_server']['url']
-checkout_dir = "/opt/account"
 artifact_id = "account"
-version = "0.3.6"
+version = node['account']['version']
 package = artifact_id + "-" + version + ".zip"
 tomcat_dir = node['tomcat']['base']
 app_temp_dir = "/tmp/#{artifact_id}"
-app_dir = "/opt/webapps/#{artifact_id}"
+app_dir = "#{node['account']['deploy_dir']}/#{artifact_id}"
 version_dir = "#{app_dir}/#{version}"
 db_user = "root"
 db_password = node['mysql']['server_root_password']
-db_name = "authentication"
+db_name = node['account']['db_name']
 deploy_type = "install"
-
-if (File.exists?("#{tomcat_dir}/webapps/#{artifact_id}") && File.symlink?("#{tomcat_dir}/webapps/#{artifact_id}") && File.readlink("#{tomcat_dir}/webapps/#{artifact_id}") == "#{app_dir}/#{version}/#{artifact_id}" && File.exists?(app_dir+'/'+version))
-	#return
-end
+host_active_mq = node['active_mq']['host']
+host_xsecd = "10.120.18.99"
 
 #prepare webapps folder
 directory "#{app_dir}/#{version}" do
-  #owner "root"
-  #group "root"
-  #mode 00755
   recursive true
-  #action :nothing
 end
 
-=begin
-#prepare app temp dir
-directory app_temp_dir do
-  owner "root"
-  group "root"
-  mode 00755
-  action :create
-end
-
-# download .war from package server
-remote_file "/#{app_temp_dir}/#{package}" do
-  source "#{package_server}/#{package}"
-  mode "0755"
-end
-
-# extract package
-execute "extract-package" do
-	cwd app_temp_dir
-	command "unzip -x #{package}"
-end
-
-#what is the version being deployed?
-
-#prepare app dir
-p_app_dir = directory app_dir do
-  owner "root"
-  group "root"
-  mode 00755
-  action :nothing
-end
-#prepare app/version dir
-p_app_v_dir = directory app_dir+'/'+version do
-  owner "root"
-  group "root"
-  mode 00755
-  action :nothing
-end
-=end
 
 # download
 remote_file "#{app_dir}/#{version}/#{package}" do
-  source "#{package_server}/#{artifact_id}/#{version}/#{package}"
-  #mode "0755"
-  #action :nothing
+  source "#{node['account']['url']}"
+	checksum "f04937ec3b6b94fd1517d397212fddc572453de146d20c801147c20760e1628e"
 end
 
 # extract package
@@ -88,13 +39,7 @@ execute "extract-package" do
 	cwd app_dir+'/'+version
 	command "unzip -x #{package}"
 	not_if {File.exists?("#{version_dir}/#{artifact_id}")}
-	#action :nothing
 end
-#p_webapp.run_action(:create)
-#p_app_dir.run_action(:create)
-#p_app_v_dir.run_action(:create)
-#p_download.run_action(:create)
-#p_extract.run_action(:run)
 
 # run mysql script
 execute "mysql-create-authen" do
@@ -106,16 +51,8 @@ end
 # config the package
 
 config_dir = "#{app_dir}/#{version}/#{artifact_id}/WEB-INF"
-#execute "dos2unix" do
-	#command "dos2unix #{config_dir}/*.conf"
-#	user "root"
-	#group "root"
-#end
-template "#{config_dir}/config.properties" do
-	content "config.properties.erb"
-	variables(
-		:development => true
-	)
+execute "dos2unix" do
+	command "dos2unix #{config_dir}/*.conf"
 end
 
 template "#{config_dir}/account-jdo.conf" do
@@ -124,34 +61,68 @@ template "#{config_dir}/account-jdo.conf" do
 		:db_name => db_user,
 		:db_password => db_password
 	)
+	notifies :restart, "service[tomcat6]"
 end
 template "#{config_dir}/active_mq-jndi.conf" do
 	content "active_mq-jndi.conf.erb"
+	variables(
+		:host_active_mq => host_active_mq
+	)
+	notifies :restart, "service[tomcat6]"
 end
 template "#{config_dir}/active_mq_sender.conf" do
 	content "active_mq_sender.conf.erb"
+	variables(
+		:host_active_mq => host_active_mq
+	)
+	notifies :restart, "service[tomcat6]"
 end
 template "#{config_dir}/authentication-module.conf" do
 	content "authentication-module.erb"
+	variables(
+		:host_account => node['ipaddress']
+	)
+	notifies :restart, "service[tomcat6]"
 end
 template "#{config_dir}/trusted-domains.xml" do
 	content "trusted-domains.xml.erb"
 	variables(
 		:ipaddress => node['ipaddress']
 	)
+	notifies :restart, "service[tomcat6]"
 end
+template "#{config_dir}/config.properties" do
+	content "config.properties.erb"
+	variables(
+		:host_xsecd => host_xsecd
+	)
+	notifies :restart, "service[tomcat6]"
+end
+template "#{config_dir}/oauth.conf" do
+	content "oauth.conf.erb"
+	variables(
+		:host_account => node['ipaddress']
+	)
+	notifies :restart, "service[tomcat6]"
+end
+template "#{config_dir}/keytrust.properties" do
+	content "keytrust.properties.erb"
+	notifies :restart, "service[tomcat6]"
+end
+
 #stop server
-service "tomcat6" do
-	action :stop
-end
+#service "tomcat6" do
+#	action :stop
+#end
 # link
 link "#{tomcat_dir}/webapps/#{artifact_id}" do
 	to	"#{app_dir}/#{version}/#{artifact_id}"
+	notifies :restart, "service[tomcat6]"
 end
 # start tomcat server
 service "tomcat6" do
-	action :start
+	supports :restart => true
+	action :enable
 end
-
 
 

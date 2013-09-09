@@ -1,7 +1,7 @@
 # XAccount client config
 
-xacct.url = http://<%=node['ipaddress']%>:8585/xacct
-xacct.url.external = http://<%=node['ipaddress']%>:8585/xacct
+xacct.url = http://<%=@host_xacct%>:<%=@port_xacct%>/xacct
+xacct.url.external = http://<%=@host_xacct%>:<%=@port_xacct%>/xacct
 
 xacct.conn.url=${xacct.url}/soap/XAcctService
 xacct.conn.timeout=10000

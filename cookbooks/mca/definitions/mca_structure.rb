@@ -2,35 +2,16 @@
 define :mca_structure, :mod_name => "module", :dest => "/tmp" do
 	app_dir = params[:dest]
 	artifact_id = params[:mod_name]
-	# install YAML
-	cpan_client 'YAML' do
-		action 'install'
-		install_type 'cpan_module'
-		user 'root'
-		group 'root'
-	end
-	# install URI::Escape
-	cpan_client 'URI::Escape' do
-		action 'install'
-		install_type 'cpan_module'
-		user 'root'
-		group 'root'
-	end
-
-
+	
 	#prepare webapps folder
 	directory "#{app_dir}" do
-	  #owner "root"
-	  #group "root"
-	  #mode 00755
 	  recursive true
-	  #action :nothing
 	end
 
 	# copy daemonlib
 	execute "copy-daemonlib" do
 		cwd "#{app_dir}"
-		command "cp -fr /opt/daemons/daemonlib/#{node['daemonlib']['version']}/daemonlib/* ."
+		command "cp -fr #{node['daemonlib']['deploy_dir']}/daemonlib/#{node['daemonlib']['version']}/daemonlib/* ."
 		not_if {::File.exists?("#{app_dir}/bin")}
 	end
 
@@ -42,6 +23,7 @@ define :mca_structure, :mod_name => "module", :dest => "/tmp" do
 	end
 	execute "copy main.pro" do
 		command "cp #{app_dir}/main.properties #{app_dir}/#{artifact_id}.properties"
+		not_if {::File.exists?("#{app_dir}/#{artifact_id}.properties")}
 	end
 
 	# edit launch.sh
@@ -51,7 +33,7 @@ define :mca_structure, :mod_name => "module", :dest => "/tmp" do
 	end
 
 	# copy commons-daemon.jar
-	commons_daemon = "/opt/daemons/commons-daemon/#{node['commons_daemon']['version']}/commons-daemon"
+	commons_daemon = "#{node['commons_daemon']['deploy_dir']}/commons-daemon/#{node['commons_daemon']['version']}/commons-daemon"
 
 	file "#{app_dir}/bin/commons-daemon.jar" do
 		content "#{commons_daemon}/commons-daemon.jar"
@@ -70,7 +52,11 @@ define :mca_structure, :mod_name => "module", :dest => "/tmp" do
 		action	:nothing
 	end
 	execute "copy jsvc file" do
-		command "cp #{commons_daemon}/bin/jsvc-src/jsvc	 #{app_dir}/bin/#{artifact_id}"
+		command "cp #{commons_daemon}/bin/jsvc-src/jsvc #{app_dir}/bin/#{artifact_id}"
+		not_if {::File.exists?("#{app_dir}/bin/#{artifact_id}")}
+	end
+	execute "make-jsvc-executable" do
+		command "chmod a+x #{app_dir}/bin/#{artifact_id}"
 	end
 
 	# prepare modules dir
@@ -85,13 +71,13 @@ define :mca_structure, :mod_name => "module", :dest => "/tmp" do
 	# copy embedded-webapp
 	execute "copy-ew" do
 		cwd "#{mod_dir}"
-		command "cp -fr /opt/daemons/embedded-webapp/#{node['embedded_webapp']['version']}/embedded-webapp ."
+		command "cp -fr #{node['embedded_webapp']['deploy_dir']}/embedded-webapp/#{node['embedded_webapp']['version']}/embedded-webapp ."
 		not_if {::File.exists?("#{mod_dir}/embedded-webapp")}
 	end
 	# copy id-generator
 	execute "copy-idgen" do
 		cwd "#{mod_dir}"
-		command "cp -fr /opt/daemons/id-generator/#{node['id_generator']['version']}/id-generator ."
+		command "cp -fr #{node['id_generator']['deploy_dir']}/id-generator/#{node['id_generator']['version']}/id-generator ."
 		not_if {::File.exists?("#{mod_dir}/id-generator")}
 	end
 

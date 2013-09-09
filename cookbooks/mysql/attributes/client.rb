@@ -29,7 +29,7 @@ when "debian"
   if debian_before_squeeze? || ubuntu_before_lucid?
     default['mysql']['client']['packages'] = %w{mysql-client libmysqlclient15-dev}
   else
-    default['mysql']['client']['packages'] = %w{mysql-client libmysqlclient-dev}
+    default['mysql']['client']['packages'] = %w{mysql-client}
   end
 when "freebsd"
   default['mysql']['client']['packages'] = %w{mysql55-client}

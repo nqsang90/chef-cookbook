@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 
+
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
 include_recipe "mysql::client"
@@ -97,6 +98,17 @@ node['mysql']['server']['packages'].each do |package_name|
   end
 end
 
+if defined? node['mysql']['server_previous_root_password'] \
+		&& node['mysql']['server_previous_root_password'] != node['mysql']['server_root_password']
+	execute "change-root-password" do
+	  command "\"#{node['mysql']['mysqladmin_bin']}\" -u root -p#{node['mysql']['server_previous_root_password']} \
+				password \"#{node['mysql']['server_root_password']}\""
+	  action :run
+	  only_if "\"#{node['mysql']['mysql_bin']}\" -u root -p#{node['mysql']['server_previous_root_password']} -e 'show databases;'"
+	end
+end
+
+=begin
 unless platform_family?(%w{mac_os_x})
 
   [File.dirname(node['mysql']['pid_file']),
@@ -218,4 +230,10 @@ unless platform_family?(%w{mac_os_x})
   service "mysql" do
     action :start
   end
+end
+
+=end
+
+service "mysql" do
+	action :start
 end

@@ -5,9 +5,9 @@ sharedServerPort=<%=@mca_port%>
 maxThreadPoolSize=150
 dumpBeforeStop=true
 <% if @production==false%>
-	gracefulShutdownTimeout=1000
-	startDelay=1000
+gracefulShutdownTimeout=60000
+startDelay=60000
 <% else %>
-	gracefulShutdownTimeout=60000
-	startDelay=60000
+gracefulShutdownTimeout=60000
+startDelay=60000
 <% end %>

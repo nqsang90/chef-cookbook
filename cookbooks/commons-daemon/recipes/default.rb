@@ -7,30 +7,23 @@
 # All rights reserved - Do Not Redistribute
 #
 
-
-package_server = node['deployment_server']['url']
 artifact_id = "commons-daemon"
 version = node['commons_daemon']['version']
 package = "#{artifact_id}-#{version}.zip"
-version_dir = "/opt/daemons/#{artifact_id}/#{version}"
+version_dir = "#{node['commons_daemon']['deploy_dir']}/#{artifact_id}/#{version}"
 app_dir = "#{version_dir}/#{artifact_id}"
 deploy_type = "install"
 
 #prepare webapps folder
 directory "#{version_dir}" do
-  #owner "root"
-  #group "root"
-  #mode 00755
   recursive true
-  #action :nothing
 end
 
 
 # download
 remote_file "#{version_dir}/#{package}" do
-  source "#{package_server}/#{artifact_id}/#{version}/#{package}"
-  #mode "0755"
-  #action :nothing
+  source "#{node['commons_daemon']['url']}"
+	checksum "3af2690fe7f82d2f759c86a1c8686759e460ccf6e5ef5f9a8e10d8db25e5c6b6"
 end
 
 # extract package

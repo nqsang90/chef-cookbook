@@ -13,7 +13,7 @@ JAVA_CP="./:config/:$(bin/classpath.sh)"
 #echo "The Class Path $JAVA_CP"
 JAVA_CMD="java"
 JAVA_LAUNCHER="com.mbv.module.launcher.ConsoleModuleLauncher"
-JAVA_OPTS="-Dlog4j.configuration=file:$APP_DIR/config/log4j.properties -Dcom.mbv.module.loaders=com.mbv.module.lib.DirectoryLibModuleLoader,com.mbv.module.lib.XmlLibModuleLoader,com.mbv.module.spring.DirectorySpringModuleLoader,com.mbv.module.spring.XmlSpringModuleLoader"
+JAVA_OPTS="-Dlog4j.configurationFile=file:$APP_DIR/config/log4j2.xml -Dcom.mbv.module.loaders=com.mbv.module.lib.DirectoryLibModuleLoader,com.mbv.module.lib.XmlLibModuleLoader,com.mbv.module.spring.DirectorySpringModuleLoader,com.mbv.module.spring.XmlSpringModuleLoader"
 JAVA_ARG_MOD_URI_ESC=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "file:$APP_DIR")
 #echo "URI escaped $JAVA_ARG_MOD_URI_ESC"
 JAVA_ARG_MODULE="module://LibDir?url=$JAVA_ARG_MOD_URI_ESC"

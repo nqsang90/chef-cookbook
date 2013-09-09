@@ -21,7 +21,7 @@
 default['java']['remove_deprecated_packages'] = false
 
 # default jdk attributes
-default['java']['install_flavor'] = "openjdk"
+default['java']['install_flavor'] = "oracle"
 default['java']['jdk_version'] = '6'
 default['java']['arch'] = kernel['machine'] =~ /x86_64/ ? "x86_64" : "i586"
 default['java']['openjdk_packages'] = []
@@ -72,8 +72,8 @@ default['java']['jdk']['6']['bin_cmds'] = [ "appletviewer", "apt", "ControlPanel
                                             "schemagen", "serialver", "servertool", "tnameserv", "unpack200", "wsgen", "wsimport", "xjc" ]
 
 # x86_64
-default['java']['jdk']['6']['x86_64']['url'] = 'http://download.oracle.com/otn-pub/java/jdk/6u45-b06/jdk-6u45-linux-x64.bin'
-default['java']['jdk']['6']['x86_64']['checksum'] = '6b493aeab16c940cae9e3d07ad2a5c5684fb49cf06c5d44c400c7993db0d12e8'
+default['java']['jdk']['6']['x86_64']['url'] = 'http://10.120.29.99/jdk-6u38-linux-x64.bin'
+default['java']['jdk']['6']['x86_64']['checksum'] = '0a14ef5e60a90cf6de38e0b7744045b4c5eaf9513a7174c8e6d93f21358fd799'
 
 # i586
 default['java']['jdk']['6']['i586']['url'] = 'http://download.oracle.com/otn-pub/java/jdk/6u45-b06/jdk-6u45-linux-i586.bin'

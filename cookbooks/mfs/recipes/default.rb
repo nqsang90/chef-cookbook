@@ -60,11 +60,15 @@ end
 
 
 execute "mysql-run-mfs" do
-	command "mysql -u #{db_user} -p#{db_password} < #{mod_dir}/mfs/sql/mfs_0.2.0.sql"
+	command "mysql -u #{db_user} -p#{db_password} < #{mod_dir}/mfs/sql/mfs_0.2.12.sql"
 	not_if "mysql -u #{db_user} -p#{db_password} --silent --skip-column-names --execute=\"show databases like 'mfs'\" | grep mfs"
     notifies :restart, "service[mfs]"
 end
-
+execute "mysql-patch-mfs" do
+	command "mysql -u #{db_user} -p#{db_password} < #{mod_dir}/mfs/sql/db-patch-0.2.12.sql"
+	not_if "mysql -u #{db_user} -p#{db_password} --silent --skip-column-names --execute=\"use mfs; show columns from scheduled_event;\" | grep schedule_id"
+    notifies :restart, "service[mfs]"
+end
 
 # config embedded-webapp
 ew_config_dir = "#{mod_dir}/embedded-webapp"

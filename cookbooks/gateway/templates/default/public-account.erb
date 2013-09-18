@@ -1,0 +1,41 @@
+	location /account {
+        # index index.htm;
+		rewrite ^/account/(.*)$ /account-<%=@host[@host['default']]['version']%>/$1;
+	}
+	
+	location /account/static/ {
+               	access_log off;
+				proxy_pass      http://<%=@host['ipaddress']%>:<%=@host[@host['default']]['port']%>/account/static/;
+                proxy_redirect  http://<%=@host['ipaddress']%>:<%=@host[@host['default']]['port']%>/account/static/ /account/static/;
+
+                proxy_buffering on;
+                proxy_store     off;
+        }
+
+	location /account/soap/mbvid {
+		deny all;
+	}
+	
+	location /account/soap/XAcctService {
+		deny all;
+	}
+
+	<% for i in 0..@host['num_instance']-1 %>
+	location /account-<%=@host[i]['version']%>/ {
+		proxy_set_header    X-Forwarded-Server-Name $server_name;
+		proxy_set_header    X-Forwarded-Server-Port $server_port;
+		proxy_set_header    X-Forwarded-Scheme $scheme;
+		proxy_set_header    X-Forwarded-Remote-Addr $remote_addr;
+		proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_pass      	http://<%=@host['ipaddress']%>:<%=@host[i]['port']%>/account/;
+		proxy_redirect  	http://<%=@host['ipaddress']%>:<%=@host[i]['port']%>/account/ /account/;
+
+		proxy_buffering off;
+		proxy_store     off;
+
+		proxy_connect_timeout 120;
+		proxy_send_timeout    120;
+		proxy_read_timeout    120;
+	}
+	<%  end %>
+

@@ -1,0 +1,86 @@
+#!/bin/sh
+
+# Prerequisites:
+# 1. Deployment needs to be installed at /opt/solr-flume-0.1.0
+# 2. daemon needs to be installed
+# 3. Script needs to be executed by root
+
+# This script will launch Solr in a mode that will automatically respawn if it
+# crashes. Output will be sent to /var/log/solr/log-index.log. A pid file will be 
+# created in the standard location.
+
+SYS_DIR=node['apache_flume']['home']
+SYS_NAME=flume-solr
+
+JAVA_CMD=$JAVA_HOME/bin/java
+
+CUR_DIR=$(pwd)
+cd ${SYS_DIR}
+CLASS_PATH=$(${SYS_DIR}/bin/classpath.sh)
+cd ${CUR_DIR}
+echo $CUR_DIR
+CMD="$JAVA_CMD -cp ./conf/:${CLASS_PATH} org.apache.flume.node.Application -n agent -f conf/flume-solr.properties"
+echo $CMD
+start () {
+    echo -n "Starting ${SYS_NAME} ... "
+
+    # start daemon
+    daemon --chdir="${SYS_DIR}" --command "${CMD}" --respawn --stdout=${SYS_DIR}/logs/${SYS_NAME}.out --stderr=${SYS_DIR}/logs/${SYS_NAME}.err --output=${SYS_DIR}/logs/${SYS_NAME}.log --name=${SYS_NAME} --verbose
+
+    RETVAL=$?
+    if [ $RETVAL = 0 ]
+    then
+        echo "done."
+    else
+        echo "failed. See error code for more information."
+    fi
+    return $RETVAL
+}
+
+stop () {
+    # stop daemon
+    echo -n "Stopping ${SYS_NAME}..."
+
+    daemon --stop --name=${SYS_NAME}  --verbose
+    RETVAL=$?
+
+    if [ $RETVAL = 0 ]
+    then
+        echo "done."
+    else
+        echo "failed. See error code for more information."
+    fi
+    return $RETVAL
+}
+
+restart () {
+    daemon --restart --name=${SYS_NAME} --verbose
+}
+
+
+status () {
+    # report on the status of the daemon
+    daemon --running --verbose --name=${SYS_NAME}
+    return $?
+}
+
+case "$1" in
+    start)
+        start
+    ;;
+    status)
+        status
+    ;;
+    stop)
+        stop
+    ;;
+    restart)
+        restart
+    ;;
+    *)
+        echo $"Usage: solr {start|status|stop|restart}"
+        exit 3
+    ;;
+esac
+
+exit $RETVAL

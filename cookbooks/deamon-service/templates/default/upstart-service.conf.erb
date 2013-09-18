@@ -1,0 +1,53 @@
+description <%=@service_name%>
+author minhluan
+setuid root
+setgid root
+
+env JAVA_HOME=<%=@java_home%>
+start on <%=@depend_service%>
+stop on runlevel [!2345]
+expect fork
+respawn
+
+post-start script
+    echo "begin start"
+    output=`ps ax | grep '<%=@search_string%>'`
+    set -- $output
+    pid=$1
+    jsvc=$5
+    pattern="jsvc.exec"
+	searchString="<%=@search_string%>"
+	servicePathExec="<%=@service_home%>/bin/<%=@basename%>.sh"
+	servicePathPid="<%=@service_home%>/bin/<%=@basename%>.pid"
+	echo $jsvc
+    if [ -f $servicePathPid ] && [$jsvc = $pattern ]; then
+     	echo "kill and remove $output $jsvc $pid"
+       	rm $servicePathPid
+      	x=`netstat -lntup |grep :<%=@service_port%> |cut -d/ -f 1`
+        set -- $x
+    	y=$7
+        kill -9 $y
+		exec "$servicePathExec" start
+    elif [ $jsvc = $pattern ] && [ ! -f $servicePathPid ]; then
+	set +e
+	x=`netstat -lntup |grep :<%=@service_port%> |cut -d/ -f 1`
+	set -- $x
+	y=$7
+	kill -9 $y
+	echo "start kill process $y"
+	exec "$servicePathExec" start
+    elif [ $jsvc != $pattern ] && [ -f $servicePathPid ]; then
+	echo "remove pid file $output $jsvc $pid"
+            rm $servicePathPid
+            exec "$servicePathExec" start
+    else
+	echo "default start"
+            exec "$servicePathExec" start
+    fi
+    echo "end start"
+end script
+
+post-stop script
+	echo "begin stop"
+	exec "<%=@service_home%>/bin/<%=@basename%>.sh" stop
+end script

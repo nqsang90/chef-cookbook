@@ -1,0 +1,40 @@
+# HTTPS server
+#
+
+#upstream <%=node['gateway']['mca_server_group']%> {
+	#<%@servers.each do |host|%>
+#		server <%= host['fqdn'] %>;
+	#<%end%>
+#}
+	
+
+server {
+	listen 443;
+	server_name mca-gateway.vn;
+
+	access_log <%=node['mca_443']['log_dir']%>/mca-443-access.log;
+    error_log <%=node['mca_443']['log_dir']%>/mca-443-error.log;
+
+	#root /vol/www;
+	#index index.html index.htm /static3/index.html;
+
+	ssl on;
+	ssl_certificate <%=node['nginx']['dir']%>/server.crt;
+	ssl_certificate_key <%=node['nginx']['dir']%>/server.key;
+
+	ssl_session_timeout 5m;
+
+	ssl_protocols SSLv3 TLSv1;
+	ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
+	ssl_prefer_server_ciphers on;
+
+	#location / {
+	#	try_files $uri $uri/ /static3/index.html;
+	#	rewrite ^/launching-ecc.htm /user/page/launching-ocb.htm last;	
+	#	rewrite ^(/[a-z_\-0-9]*).htm$ /user/page/$1.htm  last;
+	#}
+	
+	
+	include <%=node['mca_443']['location_dir']%>/*;
+}
+

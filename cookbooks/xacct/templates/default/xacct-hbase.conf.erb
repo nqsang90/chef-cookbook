@@ -1,0 +1,14 @@
+#=========================================
+# hbase
+#=========================================
+
+# development: file://./modules/xacct/hbase-site.xml
+# production: hfs://config/hbase/hbase-site.xml
+hbase.site.xml=hbase-site.xml
+
+# development: any string
+# production: xacct_
+hbase.table.prefix=dev_
+
+# maximum size of HTable connection
+hbase.pool.maxsize=8

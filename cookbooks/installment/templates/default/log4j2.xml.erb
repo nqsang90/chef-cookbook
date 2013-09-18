@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="error">
+        <appenders>
+                <Console name="Console" target="SYSTEM_OUT">
+                        <PatternLayout pattern="%d{yyMMdd HH:mm:ss.SSS} %-5level %logger{2} - %msg%n" />
+                </Console>
+                <Console name="ConsoleErr" target="SYSTEM_ERR">
+                        <PatternLayout
+                                pattern="%d{yyMMdd HH:mm:ss.SSS} [%t] %-5level %logger{2}:%L - %msg%n%ex{full}%n" />
+                </Console>
+                <File name="FileLog" fileName="logs/installment.log">
+                        <PatternLayout>
+                                <pattern>%d{yyMMdd HH:mm:ss.SSS} %-5level %logger{2} - %msg%n</pattern>
+                        </PatternLayout>
+                </File>
+                <File name="FileErr" fileName="logs/installment.err">
+                        <PatternLayout>
+                                <pattern>%d{yyMMdd HH:mm:ss.SSS} [%t] %-5level %logger{2}:%L - %msg%n%ex{full}%n</pattern>
+                        </PatternLayout>
+                </File>
+                 
+		<Flume name="eventLogger"
+				   suppressExceptions="false" compress="true"
+				   embedded="true">
+				   <ActionFlumeEventFactory
+				    defaultNames="system"
+				    defaultValues="Installment"
+				    />
+				   <Property name="channels">file</Property>
+				   <Property name="channels.file.type">memory</Property> 
+				   <Property name="channels.file.capacity">100</Property>
+				   <Property name="sinks">agent1</Property>
+				   <Property name="sinks.agent1.channel">file</Property>
+				   <Property name="sinks.agent1.type">avro</Property>
+				   <Property name="sinks.agent1.hostname">localhost</Property>
+				   <Property name="sinks.agent1.port">18181</Property>
+				   <Property name="sinks.agent1.batch-size">100</Property>
+				   
+				   <PatternLayout pattern="%msg" />
+		</Flume>	
+</appenders>
+        <loggers>
+
+		<logger name="com.mbv.ac.log" level="info">
+			   		 <appender-ref ref="eventLogger" />  
+			   		<!-- <appender-ref ref="Console" /> -->
+	  	</logger>
+                <logger name="com.mbv.installment" level="debug">
+                        <appender-ref ref="FileLog" />
+                        <appender-ref level="warn" ref="FileErr" />
+                </logger>
+                <root level="info">
+                        <appender-ref ref="Console" />
+                        <appender-ref level="error" ref="FileErr" />
+                </root>
+        </loggers>
+</configuration>

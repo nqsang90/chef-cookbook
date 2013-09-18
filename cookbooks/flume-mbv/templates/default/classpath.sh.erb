@@ -1,0 +1,7 @@
+#! /bin/sh
+
+FLUME_DIR=node['apache_flume']['home']
+
+CLASS_PATH="$(find libs | sed ':a;N;$!ba;s/\n/:/g'):$(find ${FLUME_DIR}/lib | sed ':a;N;$!ba;s/\n/:/g')"
+
+echo -n ${CLASS_PATH}

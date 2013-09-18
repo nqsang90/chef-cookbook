@@ -1,0 +1,43 @@
+	location /user/ {
+		rewrite_log on;
+		
+		#==================================
+		# single-server deployment rewrite
+		#==================================
+		rewrite ^/user/(.*)$ /user-<%=@host[@host['default']]['version']%>/$1;
+
+		#==================================
+		# multi-server deployment rewrite
+		#==================================
+		
+		# direct new/initial request	
+		rewrite ^/user/(index|login).htm(.*)$ /user-28090/$1.htm$2;
+		if ($http_cookie ~* "x_mca_version=0.4.6-rc1") {
+			# direct requests from old version
+			rewrite ^/user/(.*)$ /user-18090/$1;		
+		}
+		# direct request from current version
+		rewrite ^/user/(.*)$ /user-28090/$1;
+    }
+
+	<% for i in 0..@host['num_instance']-1 %>
+	location /user-<%=@host[i]['version']%>/ {
+		proxy_set_header    X-Forwarded-Server-Name $server_name;
+		proxy_set_header    X-Forwarded-Server-Port $server_port;
+		proxy_set_header    X-Forwarded-Scheme $scheme;
+		proxy_set_header    X-Forwarded-Remote-Addr $remote_addr;
+		proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_pass      	http://<%=@host['ipaddress']%>:<%=@host[i]['port']%>/user/;
+		proxy_redirect  	http://<%=@host['ipaddress']%>:<%=@host[i]['port']%>/user/ /user/;
+
+		proxy_buffering off;
+		proxy_store     off;
+
+		proxy_connect_timeout 120;
+		proxy_send_timeout    120;
+		proxy_read_timeout    120;
+	}
+	<%  end %>
+
+
+

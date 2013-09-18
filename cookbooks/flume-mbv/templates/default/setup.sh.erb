@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# http://stackoverflow.com/questions/2150767/how-to-start-solr-automatically
+
+ln -s node['apache_flume']['home']/bin/daemon.sh /etc/init.d/flume-solr
+
+update-rc.d flume-solr defaults

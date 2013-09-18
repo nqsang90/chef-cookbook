@@ -1,0 +1,26 @@
+#=========================================
+# database
+#=========================================
+# database server config
+database.host.name=localhost
+database.host.port=3306
+database.scheme.name=order
+database.authen.username=<%=@db_user%>
+database.authen.password=<%=@db_password%>
+database.pool.initSize=4
+database.pool.maxIdle=8
+database.pool.maxActive=16
+database.params.queryString=autoReconnect=false&useUnicode=true&characterEncoding=UTF-8
+
+# data driver config (please do not touch without guide of developer)
+database.driver.class=com.mysql.jdbc.Driver
+database.driver.scheme=jdbc:mysql
+#database.driver.dialect=org.hibernate.dialect.MySQLDialect
+database.driver.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+database.driver.showSQL=false
+
+#=========================================
+#embedded web application injection config
+#=========================================
+moduleName=order-api
+moduleWebappBase=./modules/order-process/webapp

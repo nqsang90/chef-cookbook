@@ -1,0 +1,17 @@
+# MCA deployement config
+
+mca.api.url = http://<%=@host_mca%>:8585/api
+
+# mca-core configuration
+mca-core.conn.url=${mca.api.url}/soap/mca-core
+mca-core.conn.timeout=10000
+
+mca-core.pool.init=1
+mca-core.pool.max=16
+
+# mca-messaging configuration
+mca-messaging.conn.url=${mca.api.url}/soap/mca-messaging
+mca-messaging.conn.timeout=10000
+
+mca-messaging.pool.init=1
+mca-messaging.pool.max=16

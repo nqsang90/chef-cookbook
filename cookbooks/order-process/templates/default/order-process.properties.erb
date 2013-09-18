@@ -1,0 +1,34 @@
+# the following line will load module from default ModuleLoaderRegistry
+# module=module://SpringXml?url=main%2Fmain.xml
+
+# the following line will load module at different directory
+# redirect=path_to_the_directory
+
+# the following lines define current module
+name=order-process
+version=0.1.0
+description=Embedded Webapp Module
+
+# application context
+appCtxXmlUrl=order-context.xml
+
+# the following line will ignore libs directory
+# jarsUrl=url1;url2
+
+# libs directory
+libs=libs
+
+# the follwing line will ignore modules directory
+# childModules=module1_url;module2_url
+
+# sub-module directory
+modules=modules
+
+# load child Modules on load
+loadsChildModules=true
+
+# unload this module if child module cannot load
+unloadsOnChildFailure=true
+
+# list of dependencies
+dependsOn=embedded-webapp

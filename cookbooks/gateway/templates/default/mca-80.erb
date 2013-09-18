@@ -1,0 +1,27 @@
+# HTTPS server
+#
+server {
+	listen 80;
+	server_name mca.mobivi.vn;
+
+	access_log /var/log/nginx/mca-443-access.log;
+        error_log /var/log/nginx/mca-443-error.log;
+
+	root /vol/www;
+	index index.html index.htm /static3/index.html;
+
+	location / {
+		try_files $uri $uri/ /static3/index.html;
+		rewrite ^/launching-ecc.htm /user/page/launching-ocb.htm last;	
+		rewrite ^(/[a-z_\-0-9]*).htm$ /user/page/$1.htm  last;
+	}
+	
+	include /opt/nginx/conf.d/error-pages;	
+	include /opt/nginx/locations/public-mca-user;
+	include /opt/nginx/locations/public-mca-user-beta;
+	include /opt/nginx/locations/public-mca-checkout;
+	include /opt/nginx/locations/public-mca-hr;
+	include /opt/nginx/locations/public-account;
+	include /opt/nginx/locations/public-installment;
+}
+

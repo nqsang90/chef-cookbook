@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# http://stackoverflow.com/questions/2150767/how-to-start-solr-automatically
+
+ln -s <%=node['solr_log_index']['home']%>/solr/bin/daemon.sh /etc/init.d/solr
+
+update-rc.d solr defaults
+

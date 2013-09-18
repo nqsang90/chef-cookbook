@@ -1,0 +1,18 @@
+	location /hr/ {
+                index index.htm;
+				proxy_set_header    X-Forwarded-Server-Name $server_name;
+                proxy_set_header    X-Forwarded-Server-Port $server_port;
+                proxy_set_header    X-Forwarded-Scheme $scheme;
+                proxy_set_header    X-Forwarded-Remote-Addr $remote_addr;
+                proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+				proxy_pass      http://<%=@host_hr%>:<%=@port_hr%>/hr/;
+                proxy_redirect  http://<%=@host_hr%>:<%=@port_hr%>/hr/ /hr/;
+
+                proxy_buffering off;
+                proxy_store     off;
+
+                proxy_connect_timeout 120;
+                proxy_send_timeout    120;
+                proxy_read_timeout    120;
+        }
+

@@ -1,0 +1,13 @@
+#=========================================
+#config
+#=========================================
+sharedServerPort=<%=@service_port%>
+maxThreadPoolSize=150
+dumpBeforeStop=true
+<% if @production==false%>
+gracefulShutdownTimeout=60000
+startDelay=60000
+<% else %>
+gracefulShutdownTimeout=60000
+startDelay=60000
+<% end %>

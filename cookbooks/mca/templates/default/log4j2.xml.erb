@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="error">
+        <appenders>
+                <Console name="Console" target="SYSTEM_OUT">
+                        <PatternLayout pattern="%d{yyMMdd HH:mm:ss.SSS} %-5level %logger{2} - %msg%n" />
+                </Console>
+                <Console name="ConsoleErr" target="SYSTEM_ERR">
+                        <PatternLayout
+                                pattern="%d{yyMMdd HH:mm:ss.SSS} [%t] %-5level %logger{2}:%L - %msg%n%ex{full}%n" />
+                </Console>
+                <File name="FileLog" fileName="logs/mca.log">
+                        <PatternLayout>
+                                <pattern>%d{yyMMdd HH:mm:ss.SSS} %-5level %logger{2} - %msg%n</pattern>
+                        </PatternLayout>
+                </File>
+                <File name="FileErr" fileName="logs/mca.err">
+                        <PatternLayout>
+                                <pattern>%d{yyMMdd HH:mm:ss.SSS} [%t] %-5level %logger{2}:%L - %msg%n%ex{full}%n</pattern>
+                        </PatternLayout>
+                </File>
+                 </appenders>
+        <loggers>
+                <logger name="com.mbv.mca" level="debug">
+                        <appender-ref ref="FileLog" />
+                        <appender-ref level="warn" ref="FileErr" />
+                </logger>
+                <root level="info">
+                        <appender-ref ref="Console" />
+                        <appender-ref level="error" ref="FileErr" />
+                </root>
+        </loggers>
+</configuration>

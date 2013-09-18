@@ -1,0 +1,17 @@
+description <%=@service_name%>
+author minhluan
+setuid root
+setgid root
+
+#expect fork
+env JAVA_HOME=<%=@java_home%>
+start on startup
+stop on shutdown
+respawn
+post-start script
+	exec "<%=@script_path%>" start
+end script
+
+post-stop script
+	exec "<%=@script_path%>" stop
+end script

@@ -1,0 +1,9 @@
+# production: com.mbv.services.xsecd.XsecdService
+# development: com.mbv.mca.service.services.ewallet.test.FakeXsecd
+xsecd.class = com.mbv.mca.service.services.ewallet.test.FakeXsecd
+
+# xsecd configuration
+xsecd.conn.url = http://<%=@host_xsecd%>:9999
+xsecd.conn.timeout = 300000
+xsecd.pool.init = 1
+xsecd.pool.max = 16

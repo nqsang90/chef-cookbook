@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd <%=node['solr_log_index']['home']%>
+/usr/bin/java -Dbootstrap_confdir=./solr/log_action/conf -Dcollection.configName=logconf  -jar start.jar

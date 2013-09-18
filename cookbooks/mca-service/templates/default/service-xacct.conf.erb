@@ -1,0 +1,9 @@
+# XAccount client config
+
+xacct.url = http://<%=@host_xacct%>:<%=@port_xacct%>/xacct
+
+xacct.conn.url=${xacct.url}/soap/XAcctService
+xacct.conn.timeout=30000
+
+xacct.pool.init=1
+xacct.pool.max=16

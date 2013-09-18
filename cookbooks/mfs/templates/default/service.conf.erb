@@ -1,0 +1,14 @@
+
+#####ACCOUNT SITE CONFIG#########
+xacct.soap.url=http://<%=@host_xacct%>:<%=@port_xacct%>/xacct/soap/XAcctService
+
+web.account.url=http://<%=@host_account%>:<%=@port_account%>/account
+web.account.url.internal=http://<%=@host_account%>:<%=@port_account%/account
+
+# production: com.mbv.services.xsecd.XsecdService
+# test: com.mbv.mfs.service.test.FakeXsecdService
+xsecd.class=com.mbv.mfs.service.test.FakeXsecdService
+
+# production: com.mbv.mca.service.AcClient
+# test: com.mbv.mfs.service.test.FakeAcClient
+acClient.class=com.mbv.mfs.service.test.FakeAcClient

@@ -1,0 +1,11 @@
+java.naming.factory.initial = org.apache.activemq.jndi.ActiveMQInitialContextFactory
+
+# use the following property to configure the default connector
+java.naming.provider.url = tcp://<%=@host_active_mq%>:61616
+
+# use the following property to specify the JNDI name the connection factory
+# should appear as. 
+#connectionFactoryNames = connectionFactory, queueConnectionFactory, topicConnectionFactry
+
+# queued to aggregate queued message
+queue.QueuedMessage.In = Queue.QueuedMessage.In

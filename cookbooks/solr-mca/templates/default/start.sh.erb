@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd <%=node['solr_mca']['home']%>
+java -Dbootstrap_confdir=./solr/mca/conf -Dcollection.configName=logconf  -jar start.jar

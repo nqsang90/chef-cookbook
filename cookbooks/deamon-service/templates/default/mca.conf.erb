@@ -1,0 +1,44 @@
+description <%=@service_name%>
+author minhluan
+setuid root
+setgid root
+
+env JAVA_HOME=<%=@java_home%>
+start on runlevel [2345]
+stop on runlevel [!2345]
+expect fork
+respawn
+
+post-start script
+    echo "begin start"
+    output=`ps ax | grep '<%=@search_string%>'`
+    set -- $output
+    pid=$1
+    jsvc=$5
+    pattern="jsvc.exec"
+	echo $jsvc
+    if [ -f <%=@service_home%>/bin/<%=@service_name%>.pid ] && [$jsvc = $pattern ]; then
+     	echo "kill and remove $output $jsvc $pid"
+           	rm <%=@service_home%>/bin/<%=@service_name%>.pid
+          	kill -9 $(ps ax|grep '<%=@search_string%>')
+            exec "<%=@service_home%>/bin/<%=@service_name%>.sh" start
+    elif [ $jsvc = $pattern ] && [ ! -f <%=@service_home%>/bin/<%=@service_name%>.pid ]; then
+	set +e
+            echo "start kill process $jsvc $pid"
+	kill -9 `ps ax|grep <%=@search_string%>|awk '{print $1}'`
+	exec "<%=@service_home%>/bin/<%=@service_name%>.sh" start
+    elif [ $jsvc != $pattern ] && [ -f <%=@service_home%>/bin/<%=@service_name%>.pid ]; then
+	echo "remove pid file $output $jsvc $pid"
+            rm <%=@service_home%>/bin/<%=@service_name%>.pid
+            exec "<%=@service_home%>/bin/<%=@service_name%>.sh" start
+    else
+	echo "default start"
+            exec "<%=@service_home%>/bin/<%=@service_name%>.sh" start
+    fi
+    echo "end start"
+end script
+
+post-stop script
+	echo "begin stop"
+	exec "<%=@service_home%>/bin/<%=@service_name%>.sh" stop
+end script

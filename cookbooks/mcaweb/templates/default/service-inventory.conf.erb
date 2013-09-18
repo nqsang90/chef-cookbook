@@ -1,0 +1,21 @@
+inventory.conn.url		= http://<%=@host_inv%>:<%=@port_inv%>/inventory/soap/inventory-api
+inventory.conn.timeout	= 10000
+inventory.pool.initSize = 4
+inventory.pool.maxSize 	= 8
+
+order.conn.url			= http://<%=@host_order%>:<%=@port_order%>/order-api/soap/order-api
+order.conn.timeout		= 10000
+order.pool.initSize 	= 4
+order.pool.maxSize 		= 8
+
+# content service call
+installment.conn.external	= http://<%=@host_installment%>:<%=@port_installment%>/installment
+
+# others service all
+installment.conn.host		= http://<%=@host_installment%>:<%=@port_installment%>/installment
+installment.conn.url		= ${installment.conn.host}/soap/installment
+installment.conn.timeout	= 10000
+installment.pool.initSize 	= 4
+installment.pool.maxSize 	= 8
+
+installment.provider.cache.min = 5

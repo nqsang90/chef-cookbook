@@ -1,0 +1,11 @@
+#! /bin/sh
+
+BIN_DIR=/opt/flume-solr-0.1.0/bin
+
+JAVA_CMD=$JAVA_HOME/bin/java
+
+CLASS_PATH=$(${BIN_DIR}/classpath.sh)
+
+cd ${BIN_DIR}/..
+
+$JAVA_CMD -cp ./conf/:${CLASS_PATH} org.apache.flume.node.Application -n agent -f conf/flume-solr.properties

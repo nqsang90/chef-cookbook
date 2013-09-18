@@ -7,14 +7,11 @@ long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '0.2.0'
 
 depends "java"
-depends "account"
-depends "xacct"
 
 depends "daemonlib"
 depends "commons-daemon"
 depends "embedded-webapp"
 depends "id-generator"
 
-
-depends "deamon-service"
+depends "mca-structure"
 

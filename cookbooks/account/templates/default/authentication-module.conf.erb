@@ -16,7 +16,7 @@ email.password.reset.title=Thong tin thiet lap mat khau moi MobiVi ID
 
 #configuration service to remote MobiVi ID that allow write database
 mbvidClient.class=com.mbv.account.soap.mbvid.MbvIdServiceClient
-mbvidClient.conn.url=http://<%=@host_account%>:8080/account/soap/mbvid
+mbvidClient.conn.url=http://<%=@host_account%>:<%=@port_account%>/account/soap/mbvid
 mbvidClient.conn.timeout=60000
 mbvid.pool.init=8
 mbvid.pool.max=16

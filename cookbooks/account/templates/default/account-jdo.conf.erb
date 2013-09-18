@@ -8,10 +8,10 @@ database.driver.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
 database.driver.showSQL=false
 
 # database server config
-database.host.name=localhost
-database.host.port=3306
-database.scheme.name=authentication
-database.authen.username=<%=@db_name%>
+database.host.name=<%=@db_host%>
+database.host.port=<%=@db_port%>
+database.scheme.name=<%=@db_schema%>
+database.authen.username=<%=@db_username%>
 database.authen.password=<%=@db_password%>
 database.pool.initSize=4
 database.pool.maxIdle=8

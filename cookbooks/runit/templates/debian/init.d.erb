@@ -1,18 +1,18 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          <%= @name %>
+# Provides:          <%= @params[:name] %>
 # Required-Start:
 # Required-Stop:
 # Default-Start:
 # Default-Stop:
-# Short-Description: initscript for runit-managed <%= @name %> service
+# Short-Description: initscript for runit-managed <%= @params[:name] %> service
 ### END INIT INFO
 
 # Author: Opscode, Inc. <cookbooks@opscode.com>
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC="runit-managed <%= @name %>"
-NAME=<%= @name %>
+DESC="runit-managed <%= @params[:name] %>"
+NAME=<%= @params[:name] %>
 RUNIT=/usr/bin/sv
 SCRIPTNAME=/etc/init.d/$NAME
 
@@ -30,16 +30,16 @@ SCRIPTNAME=/etc/init.d/$NAME
 case "$1" in
   start)
         [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC " "$NAME"
-        $RUNIT start $NAME
+        $RUNIT <%= @params[:start_command] %> $NAME
         [ "$VERBOSE" != no ] && log_end_msg $?
         ;;
   stop)
         [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
-        $RUNIT stop $NAME
+        $RUNIT <%= @params[:stop_command] %> $NAME
         [ "$VERBOSE" != no ] && log_end_msg $?
         ;;
   status)
-        $RUNIT status $NAME && exit 0 || exit $?
+        $RUNIT <%= @params[:status_command] %> $NAME && exit 0 || exit $?
         ;;
   reload)
         [ "$VERBOSE" != no ] && log_daemon_msg "Reloading $DESC" "$NAME"
@@ -53,7 +53,7 @@ case "$1" in
         ;;
   restart)
         [ "$VERBOSE" != no ] && log_daemon_msg "Restarting $DESC" "$NAME"
-        $RUNIT restart $NAME
+        $RUNIT <%= @params[:restart_command] %> $NAME
         [ "$VERBOSE" != no ] && log_end_msg $?
         ;;
   *)

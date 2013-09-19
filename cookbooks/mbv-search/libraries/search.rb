@@ -4,13 +4,17 @@ module Mbv
 			def do_search(cookbook_name, recipe_name, index)
 				host = {}
 
-				puts "node #{node['recipes']}"
+				#puts "node #{node['recipes']}"
 
 				if node['recipes'].include? index
 					host['ipaddress'] = node['ipaddress']
 					host['fqdn'] = node['fqdn']
-					default_inst = node[index]['default']
-					host['port'] = node[index][default_inst]['port']
+					unless node[index]['num_instance'].nil?
+						default_inst = node[index]['default']
+						host['port'] = node[index][default_inst]['port']
+					else
+						host['port'] = node[index]['port']
+					end
 				else
 					servers = search(:node, "recipes:#{cookbook_name}")
 					if servers.length > 0
@@ -57,8 +61,8 @@ module Mbv
 
 						for i in 0..num_instance-1
 							host[i] = {}
-							host[i]['port'] = servers[0][index][i]['port']
-							host[i]['version'] = servers[0][index][i]['version']
+							host[i]['port'] = servers[0][index]["#{i}"]['port']
+							host[i]['version'] = servers[0][index]["#{i}"]['version']
 						end
 					else
 						log "#{cookbook_name} single #{num_instance} instance"

@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe "mbv-tomcat"
+include_recipe "tomcat"
 
 
 class ::Chef::Recipe
@@ -40,85 +40,83 @@ if (port_user == '' || port_account == '' || port_mca == '' || port_xacct == '')
 	return
 end
 
-for i in 0..node['account']['num_instance']-1
-	package_server = node['deployment_server']['url']
-	artifact_id = "mca-hr"
-	version = node['mca_hr'][i]['version']
-	package = artifact_id + "-" + version + ".zip"
-	tomcat_dir = node['mbv_tomcat'][i]['home']
-	app_dir = "#{node['mca_hr']['deploy_dir']}/#{artifact_id}"
-	version_dir = "#{app_dir}/#{version}"
-	dest_link = "hr"
-	link_path = "#{tomcat_dir}/webapps/#{dest_link}"
+package_server = node['deployment_server']['url']
+artifact_id = "mca-hr"
+version = node['mca_hr']['version']
+package = artifact_id + "-" + version + ".zip"
+tomcat_dir = node['tomcat']['base']
+app_dir = "#{node['mca_hr']['deploy_dir']}/#{artifact_id}"
+version_dir = "#{app_dir}/#{version}"
+dest_link = "hr"
+link_path = "#{tomcat_dir}/webapps/#{dest_link}"
 
-	#prepare webapps folder
-	directory "#{app_dir}/#{version}" do
-	  recursive true
-	end
-
-
-	# download
-	remote_file "#{version_dir}/#{package}" do
-	 	source "#{node['mca_hr'][i]['url']}"
-		checksum node['mca_hr'][i]['checksum']
-	end
-
-	# extract package
-	execute "extract-package" do
-		cwd app_dir+'/'+version
-		command "unzip -x #{package}"
-		not_if {File.exists?("#{version_dir}/#{artifact_id}")}
-	end
+#prepare webapps folder
+directory "#{app_dir}/#{version}" do
+  recursive true
+end
 
 
-	# config the package
+# download
+remote_file "#{version_dir}/#{package}" do
+ 	source "#{node['mca_hr']['url']}"
+	checksum node['mca_hr']['checksum']
+end
 
-	config_dir = "#{version_dir}/#{artifact_id}/WEB-INF"
-	execute "dos2unix" do
-		command "dos2unix #{config_dir}/*.conf"
-	end
+# extract package
+execute "extract-package" do
+	cwd app_dir+'/'+version
+	command "unzip -x #{package}"
+	not_if {File.exists?("#{version_dir}/#{artifact_id}")}
+end
 
-	template "#{config_dir}/ctx-service.conf" do
-		content "ctx-service.conf.erb"
-		variables(
-			:host_user => host_user
-		)
-		notifies :restart, "service[ntomcat-#{i}]"
-	end
-	template "#{config_dir}/service-account.conf" do
-		content "service-account.conf.erb"
-		variables(
-			:gateway_account => gateway_account,
-			:host_account => host_account,
-			:port_account => port_account
-		)
-		notifies :restart, "service[ntomcat-#{i}]"
-	end
-	template "#{config_dir}/service-mca.conf" do
-		content "service-mca.conf.erb"
-		variables(
-			:host_mca => host_mca,
-			:port_mca => port_mca
-		)
-		notifies :restart, "service[ntomcat-#{i}]"
-	end
-	template "#{config_dir}/service-memcached.conf" do
-		content "service-memcached.conf.erb"
-		notifies :restart, "service[ntomcat-#{i}]"
-	end
-	template "#{config_dir}/service-xacct.conf" do
-		content "service-xacct.conf.erb"
-		variables(
-			:host_xacct => host_xacct,
-			:port_xacct => port_xacct
-		)
-		notifies :restart, "service[ntomcat-#{i}]"
-	end
 
-	link link_path do
-		to	"#{app_dir}/#{version}/#{artifact_id}"
-		notifies :restart, "service[ntomcat-#{i}]"
-	end
+# config the package
+
+config_dir = "#{version_dir}/#{artifact_id}/WEB-INF"
+execute "dos2unix" do
+	command "dos2unix #{config_dir}/*.conf"
+end
+
+template "#{config_dir}/ctx-service.conf" do
+	content "ctx-service.conf.erb"
+	variables(
+		:host_user => host_user
+	)
+	notifies :restart, "service[tomcat]"
+end
+template "#{config_dir}/service-account.conf" do
+	content "service-account.conf.erb"
+	variables(
+		:gateway_account => gateway_account,
+		:host_account => host_account,
+		:port_account => port_account
+	)
+	notifies :restart, "service[tomcat]"
+end
+template "#{config_dir}/service-mca.conf" do
+	content "service-mca.conf.erb"
+	variables(
+		:host_mca => host_mca,
+		:port_mca => port_mca
+	)
+	notifies :restart, "service[tomcat]"
+end
+template "#{config_dir}/service-memcached.conf" do
+	content "service-memcached.conf.erb"
+	notifies :restart, "service[tomcat]"
+end
+template "#{config_dir}/service-xacct.conf" do
+	content "service-xacct.conf.erb"
+	variables(
+		:host_xacct => host_xacct,
+		:port_xacct => port_xacct
+	)
+	notifies :restart, "service[tomcat]"
+end
+
+link link_path do
+	to	"#{app_dir}/#{version}/#{artifact_id}"
+	notifies :restart, "service[tomcat]"
 end
 
 

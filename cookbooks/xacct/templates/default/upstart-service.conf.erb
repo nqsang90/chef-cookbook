@@ -17,24 +17,18 @@ post-start script
     jsvc=$5
     pattern="jsvc.exec"
 	searchString="<%=@search_string%>"
-	servicePathExec="<%=@service_home%>/bin/<%=@basename%>.sh"
-	servicePathPid="<%=@service_home%>/bin/<%=@basename%>.pid"
+	servicePathExec="<%=@service_home%>/bin/<%=@service_name%>.sh"
+	servicePathPid="<%=@service_home%>/bin/<%=@service_name%>.pid"
 	echo $jsvc
     if [ -f $servicePathPid ] && [$jsvc = $pattern ]; then
      	echo "kill and remove $output $jsvc $pid"
        	rm $servicePathPid
-      	x=`netstat -lntup |grep :<%=@service_port%> |cut -d/ -f 1`
-        set -- $x
-    	y=$7
-        kill -9 $y
-		exec "$servicePathExec" start
+      	kill -9 $(ps ax|grep '$searchString')
+        exec "$servicePathExec" start
     elif [ $jsvc = $pattern ] && [ ! -f $servicePathPid ]; then
 	set +e
-	x=`netstat -lntup |grep :<%=@service_port%> |cut -d/ -f 1`
-	set -- $x
-	y=$7
-	kill -9 $y
-	echo "start kill process $y"
+            echo "start kill process $jsvc $pid"
+	kill -9 `ps ax|grep $searchString|awk '{print $1}'`
 	exec "$servicePathExec" start
     elif [ $jsvc != $pattern ] && [ -f $servicePathPid ]; then
 	echo "remove pid file $output $jsvc $pid"
@@ -49,5 +43,5 @@ end script
 
 post-stop script
 	echo "begin stop"
-	exec "<%=@service_home%>/bin/<%=@basename%>.sh" stop
+	exec "<%=@service_home%>/bin/<%=@service_name%>.sh" stop
 end script

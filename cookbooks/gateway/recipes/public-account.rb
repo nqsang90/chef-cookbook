@@ -5,13 +5,14 @@ class ::Chef::Recipe
 end
 
 nginx_dir = node['nginx']['dir']
-host = multi_search('account', 'default', 'account')
+account = multi_search('account', 'default', 'account')
 
-if host['num_instance'] > 0
+if account['num_instance'] > 0
 	template "#{node['mca_443']['location_dir']}/public-account" do
 		content		"public-account.erb"
 		variables(
-			:host => host
+			:host_account => account['ipaddress'],
+			:port_account => account[0]['port']
 		)
 	notifies :reload, "service[nginx]"
 	end

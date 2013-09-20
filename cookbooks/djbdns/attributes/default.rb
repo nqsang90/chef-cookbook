@@ -19,10 +19,16 @@
 # limitations under the License.
 #
 
+# attributes for set_resolver recipe 
+default['djbdns']['dns_domain']			= "mca.mobivi.vn"
+default['djbdns']['dns_defaults']               = ["10.80.0.2"]
+default['djbdns']['dns_ip']               	= "10.80.10.31"
+
+default['djbdns']['domain']			= "mca.mobivi.vn"
 default['djbdns']['tinydns_ipaddress']          = "127.0.0.1"
 default['djbdns']['tinydns_internal_ipaddress'] = "127.0.0.1"
 default['djbdns']['public_dnscache_ipaddress']  = node['ipaddress']
-default['djbdns']['axfrdns_ipaddress']          = "127.0.0.1"
+default['djbdns']['axfrdns_ipaddress']          = node['ipaddress']
 
 default['djbdns']['axfrdns_uid']  = 9996
 default['djbdns']['dnscache_uid'] = 9997
@@ -34,6 +40,7 @@ default['djbdns']['public_dnscache_allowed_networks'] = [node['ipaddress'].split
 default['djbdns']['tinydns_internal_resolved_domain'] = node['domain']
 # see Locally Served DNS Zones: http://tools.ietf.org/html/rfc6303
 default['djbdns']['tinydns_internal_resolved_reverse_domains'] = [
+  "mca01", "mca02", "mca03",
   "10.in-addr.arpa" ,"16.172.in-addr.arpa", "17.172.in-addr.arpa",
   "18.172.in-addr.arpa", "19.172.in-addr.arpa", "20.172.in-addr.arpa",
   "21.172.in-addr.arpa", "22.172.in-addr.arpa", "23.172.in-addr.arpa",

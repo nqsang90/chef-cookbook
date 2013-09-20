@@ -1,0 +1,5 @@
+<% unless @dns_ip.nil? %>nameserver <%= @dns_ip %><% end %>
+<% @dns_ips.each do |dns_ip| -%>
+nameserver <%= dns_ip %>
+<% end -%>
+search <%= @dns_domain %>

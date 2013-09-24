@@ -38,10 +38,14 @@ begin
     action :create
   end
 
-  %w{ ns host alias }.each do |type|
-    dns[type].each do |record|
-      record.each do |fqdn,ip|
+	puts("dns bag #{dns['host']}")
 
+  %w{ host  }.each do |type|
+	puts type
+    dns[type].each do |record|
+		puts record
+      record.each do |fqdn,ip|
+		puts fqdn
         djbdns_rr fqdn do
           cwd "#{node['djbdns']['tinydns_internal_dir']}/root"
           ip ip

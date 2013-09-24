@@ -20,12 +20,12 @@
 #
 
 # attributes for set_resolver recipe 
-default['djbdns']['dns_domain']			= "mca.mobivi.vn"
-default['djbdns']['dns_defaults']               = ["10.80.0.2"]
-default['djbdns']['dns_ip']               	= "10.80.10.31"
+default['djbdns']['dns_domain']			= "mca.dns"
+default['djbdns']['dns_defaults']               = []
+default['djbdns']['dns_ip']               	= "10.120.0.89"
 
-default['djbdns']['domain']			= "mca.mobivi.vn"
-default['djbdns']['tinydns_ipaddress']          = "127.0.0.1"
+default['djbdns']['domain']			= "mca.dns"
+default['djbdns']['tinydns_ipaddress']          = node['ipaddress']
 default['djbdns']['tinydns_internal_ipaddress'] = "127.0.0.1"
 default['djbdns']['public_dnscache_ipaddress']  = node['ipaddress']
 default['djbdns']['axfrdns_ipaddress']          = node['ipaddress']
